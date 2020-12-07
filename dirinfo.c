@@ -3,10 +3,28 @@
 #include <sys/stat.h>
 #include <time.h>
 #include <dirent.h>
+#include <errno.h>
 
-int main(){
+int main(int argc, char **argv){
     int d_size;
-    DIR *d = opendir(".");
+    DIR *d;
+    
+    if(argv[1]){
+        d = opendir(argv[1]);
+        if(d == -1){
+            printf("Invalid directory: %d  MSG: %s\n", errno, strerror(errno));
+        }
+    }
+    else{
+        char buffer[100];
+        printf("Enter a directory: ");
+        fgets(buffer, sizeof(buffer), stdin);
+        d = opendir(buffer);
+        if(d == -1){
+            printf("Invalid directory: %d  MSG: %s\n", errno, strerror(errno));
+        }
+    }
+
     struct dirent *entry = readdir(d);
 
     printf("Statistics for directory: %s\n", entry->d_name);
